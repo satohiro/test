@@ -391,7 +391,7 @@
           }
         }
       ]
-      
+
     },
     {
       "apiVersion": "2016-09-01",
@@ -420,7 +420,7 @@
           }
         ]
       }
-    },    
+    },
     {
       "apiVersion": "2016-03-30",
       "type": "Microsoft.Compute/virtualMachines",
@@ -627,7 +627,7 @@
               "caching": "None",
               "createOption": "Empty"
             },
-                        {
+            {
               "name": "datadisk5",
               "diskSizeGB": "[parameters('dataDiskSize')]",
               "lun": 4,
@@ -647,7 +647,7 @@
               "caching": "None",
               "createOption": "Empty"
             },
-                        {
+            {
               "name": "datadisk7",
               "diskSizeGB": "[parameters('dataDiskSize')]",
               "lun": 6,
@@ -667,7 +667,7 @@
               "caching": "None",
               "createOption": "Empty"
             },
-                        {
+            {
               "name": "datadisk9",
               "diskSizeGB": "[parameters('dataDiskSize')]",
               "lun": 8,
@@ -696,32 +696,29 @@
             }
           ]
         }
-      },
-      "resources": [
-        {
-          "type": "Microsoft.Compute/virtualMachines/extensions",
-          "name": "[concat(parameters('vmNameNFSServer'), '/scripts')]",
-          "apiVersion": "2015-06-15",
-          "location": "[resourceGroup().location]",
-          "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNameNFSServer'))]"
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('vmNameNFSServer'), '/scripts')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+          "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNameNFSServer'))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.Azure.Extensions",
+        "type": "CustomScript",
+        "typeHandlerVersion": "2.0",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+            "[concat(parameters('_artifactsLocation'), '/azuredeploy.sh', parameters('_artifactsLocationSasToken'))]"
           ],
-          "properties": {
-            "publisher": "Microsoft.Azure.Extensions",
-            "type": "CustomScript",
-            "typeHandlerVersion": "2.0",
-            "autoUpgradeMinorVersion": true,
-            "settings": {
-              "fileUris": [
-                "[concat(parameters('_artifactsLocation'), '/azuredeploy.sh', parameters('_artifactsLocationSasToken'))]"
-              ],
-              "commandToExecute": "[variables('installationCLINFSServer')]"
-            }
-          }
+          "commandToExecute": "[variables('installationCLINFSServer')]"
         }
-      ]
+      }
     }
-
   ],
   "outputs": {
     "sshCommand": {
