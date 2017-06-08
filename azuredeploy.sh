@@ -40,7 +40,7 @@ create_etc_hosts() {
   echo $NFS_SERVER_IP $NFS_SERVER_NAME >> /etc/hosts
   echo $NFS_SERVER_IP $NFS_SERVER_NAME >> /tmp/hosts.$$
   i=0
-  while [ $i -lt NUMBER_OF_EXEC ]
+  while [ $i -lt $NUMBER_OF_EXEC ]
   do
     workerip=`expr $i + $WORKER_IP_START`
     echo $WORKER_IP_BASE$workerip $WORKER_NAME$i >> /etc/hosts
@@ -53,7 +53,7 @@ setup_chainermn() {
   ### THIS VERSION is CPU only ###
 
   # setup libs
-  sudo apt-get install git vim build-essential python-dev libgtk2.0-dev tmux byobu python-pip python3-pip libffi-dev
+  sudo apt-get install -y git vim build-essential python-dev libgtk2.0-dev tmux byobu python-pip python3-pip libffi-dev
 
   # setup openmpi
   cd /tmp
