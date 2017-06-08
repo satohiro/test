@@ -430,7 +430,7 @@
       "dependsOn": [
         "[variables('storageAccountName')]",
         "nicLoop",
-        "[concat(parameters('vmNameNFSServer'), '/scripts')]",
+        "[concat('Microsoft.Compute/extensions/', parameters('vmNameNFSServer'), '/scripts')]",
         "[concat('Microsoft.Compute/virtualMachines/', variables('vmNameMaster'))]"
       ],
       "copy": {
