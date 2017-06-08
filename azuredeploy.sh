@@ -1,5 +1,7 @@
 #!/bin/sh
 
+exit 0
+
 # This script can be found on https://github.com/***********
 # This script is part of azure deploy ARM template
 # This script assumes the Linux distribution to be Ubuntu (or at least have apt-get support)
