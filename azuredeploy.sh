@@ -62,19 +62,19 @@ setup_chainermn() {
   wget https://www.open-mpi.org/software/ompi/v2.1/downloads/openmpi-2.1.0.tar.gz
   tar zxf openmpi-2.1.0.tar.gz
   cd openmpi-2.1.0
-  ./configure
-  make all -j
-  sudo make install
+  ./configure > /tmp/openmpi.$$ 2>&1
+  make all -j >> /tmp/openmpi.$$ 2>&1
+  sudo make install >> /tmp/openmpi.$$ 2>&1
 
   # setup cython
-  sudo pip3 install cython
-  sudo ldconfig
+  sudo pip3 install cython > /tmp/cython.$$ 2>&1
+  sudo ldconfig > /tmp/ldconfig.$$ 2>&1
 
   # setup chainermn for CPU
   cd /tmp
   git clone https://github.com/pfnet/chainermn
   cd chainermn
-  LDFLAGS="-L/usr/local/lib/openmpi -L/usr/local/lib" CFLAGS="-I/usr/local/cuda/include -I/usr/local/include" sudo python3 setup.py install --no-nccl  
+  LDFLAGS="-L/usr/local/lib/openmpi -L/usr/local/lib" CFLAGS="-I/usr/local/cuda/include -I/usr/local/include" sudo python3 setup.py install --no-nccl  > /tmp/chainermn.$$ 2>&1
  }
 
 
