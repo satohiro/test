@@ -321,7 +321,7 @@
       "dependsOn": [
         "[variables('storageAccountName')]",
         "[variables('nicNameMaster')]",
-        "[concat('Microsoft.Compute/virtualMachines/extensions/', parameters('vmNameNFSServer'), '/scripts')]"
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNameNFSServer'))]"
       ],
       "properties": {
         "hardwareProfile": {
@@ -430,7 +430,7 @@
       "dependsOn": [
         "[variables('storageAccountName')]",
         "nicLoop",
-        "[concat('Microsoft.Compute/virtualMachines/extensions/', parameters('vmNameNFSServer'), '/scripts')]",
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNameNFSServer'))]",
         "[concat('Microsoft.Compute/virtualMachines/', variables('vmNameMaster'))]"
       ],
       "copy": {
