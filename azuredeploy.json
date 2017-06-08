@@ -121,27 +121,6 @@
         "description": "The sasToken required to access _artifactsLocation.  When the template is deployed using the accompanying scripts, a sasToken will be automatically generated."
       },
       "defaultValue": ""
-    },
-    "master_script": {
-      "type": "string",
-      "metadata": {
-        "description": "Script after Master node setup."
-      },
-      "defaultValue": ""
-    },
-    "worker_script": {
-      "type": "string",
-      "metadata": {
-        "description": "Script after Exec node setup."
-      },
-      "defaultValue": ""
-    },
-    "nfsserver_script": {
-      "type": "string",
-      "metadata": {
-        "description": "Script after NFS Server setup."
-      },
-      "defaultValue": ""
     }
   },
   "variables": {
@@ -186,7 +165,7 @@
     "publicIPAddressType": "Dynamic",
     "sshKeyPath": "[concat('/home/',parameters('adminUserName'),'/.ssh/authorized_keys')]",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', variables('networkSettings').virtualNetworkName, variables('networkSettings').subnet.dse.name)]",
-    "installationParameter": "[concat(variables('vmNameMaster'),' ', variables('networkSettings').statics.master,' ', variables('vmNameExecution'),' ', variables('networkSettings').statics.workerRange.base,' ', variables('networkSettings').statics.workerRange.start,' ',parameters('vmNameNFSServer'),' ', variables('networkSettings').statics.nfsserver,' ',parameters('generalUserName'),' ',parameters('nodeExecutionCount'), ' ', variables('singleQuote'),parameters('generalUserSSHKeyData'), variables('singleQuote'), ' ',resourceGroup().name,' ', variables('singleQuote'),parameters('master_script'), variables('singleQuote'), ' ', variables('singleQuote'),parameters('worker_script'), variables('singleQuote'), ' ', variables('singleQuote'),parameters('nfsserver_script'), variables('singleQuote'))]",
+    "installationParameter": "[concat(variables('vmNameMaster'),' ', variables('networkSettings').statics.master,' ', variables('vmNameExecution'),' ', variables('networkSettings').statics.workerRange.base,' ', variables('networkSettings').statics.workerRange.start,' ',parameters('vmNameNFSServer'),' ', variables('networkSettings').statics.nfsserver,' ',parameters('generalUserName'),' ',parameters('nodeExecutionCount'), ' ', variables('singleQuote'),parameters('generalUserSSHKeyData'), variables('singleQuote'))]",
     "installationCLILeader": "[concat('sh azuredeploy.sh ', 'master',' ', variables('installationParameter'))]",
     "installationCLIFollower": "[concat('sh azuredeploy.sh ', 'exec',' ', variables('installationParameter'))]",
     "installationCLINFSServer": "[concat('sh azuredeploy.sh ', 'nfsserver',' ', variables('installationParameter'))]"

@@ -40,7 +40,7 @@ create_etc_hosts() {
   echo $NFS_SERVER_IP $NFS_SERVER_NAME >> /etc/hosts
   echo $NFS_SERVER_IP $NFS_SERVER_NAME >> /tmp/hosts.$$
   i=0
-  while [ $i -lt $NUM_OF_VM ]
+  while [ $i -lt NUMBER_OF_EXEC ]
   do
     workerip=`expr $i + $WORKER_IP_START`
     echo $WORKER_IP_BASE$workerip $WORKER_NAME$i >> /etc/hosts
@@ -98,8 +98,8 @@ then
     exit 1
   fi
 else
-  if [ "$#" -ne 15 ]; then
-    echo "Usage: $0 master|exec MASTER_NAME MASTER_IP WORKER_NAME WORKER_IP_BASE WORKER_IP_START NFS_SERVER_NAME NFS_SERVER_IP NEWUSER NUMBER_OF_EXEC GENERAL_USER_SSH_KEY RESOURCEGROUP MASTER_SCRIPT WORKER_SCRIPT NFSSERVER_SCRIPT" >> /tmp/azuredeploy.log.$$
+  if [ "$#" -ne 11 ]; then
+    echo "Usage: $0 master|exec MASTER_NAME MASTER_IP WORKER_NAME WORKER_IP_BASE WORKER_IP_START NFS_SERVER_NAME NFS_SERVER_IP NEWUSER NUMBER_OF_EXEC GENERAL_USER_SSH_KEY" >> /tmp/azuredeploy.log.$$
     exit 1
   fi
   ## Create /etc/hosts
@@ -114,11 +114,6 @@ else
   NEWUSER=$9
   NUMBER_OF_EXEC=$10
   GENERAL_USER_SSH_KEY=$11
-  RESOURCEGROUP=$12
-  MASTER_SCRIPT=$13
-  WORKER_SCRIPT=$14
-  NFSSERVER_SCRIPT=$15
-  NUM_OF_VM=100
   # Create /etc/hosts
   create_etc_hosts
 fi
