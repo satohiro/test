@@ -23,6 +23,7 @@
     },
     "generalUserName": {
       "type": "string",
+      "defaultValue": "generaluser",
       "metadata": {
         "description": "General User name for the Virtual Machine."
       }
@@ -60,6 +61,7 @@
     },
     "sourceAddressPrefix": {
       "type": "string",
+      "defaultValue": "*",
       "metadata": {
         "description": "Single IP address (i.e. 10.10.10.10), IP subnet (i.e. 192.168.1.0/24), default tag, or * (for all addresses)"
       }
@@ -73,7 +75,7 @@
     },
     "ubuntuOSVersion": {
       "type": "string",
-      "defaultValue": "14.04.4-LTS",
+      "defaultValue": "16.04.0-LTS",
       "allowedValues": [
         "14.04.4-LTS",
         "16.04.0-LTS"
@@ -91,35 +93,35 @@
     },
     "vmSize": {
       "type": "string",
-      "defaultValue": "Standard_D1_v2",
+      "defaultValue": "Standard_A2",
       "metadata": {
         "description": "Size of the execution nodes."
       }
     },
     "nodeExecutionCount": {
       "type": "int",
-      "defaultValue": 2,
+      "defaultValue": 1,
       "metadata": {
         "description": "Number of execution nodes in the cluster."
       }
     },
     "vmSizeLeader": {
       "type": "string",
-      "defaultValue": "Standard_D1_v2",
+      "defaultValue": "Standard_A2",
       "metadata": {
         "description": "Size of the login node."
       }
     },
     "vmSizeNFSServer": {
       "type": "string",
-      "defaultValue": "Standard_D14",
+      "defaultValue": "Standard_A4",
       "metadata": {
         "description": "Size of NFS Server."
       }
     },
     "dataDiskSize": {
       "type": "int",
-      "defaultValue": 1000,
+      "defaultValue": 100,
       "metadata": {
         "description": "Size of each data disk attached to data nodes in (Gb). Currently we attach 10 disks"
       }
@@ -319,7 +321,7 @@
       "dependsOn": [
         "[variables('storageAccountName')]",
         "[variables('nicNameMaster')]",
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNameNFSServer'))]"
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNameNFSServer'), '/azureVmUtils')]"
       ],
       "properties": {
         "hardwareProfile": {
@@ -428,7 +430,7 @@
       "dependsOn": [
         "[variables('storageAccountName')]",
         "nicLoop",
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNameNFSServer'))]",
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNameNFSServer'), '/azureVmUtils')]",
         "[concat('Microsoft.Compute/virtualMachines/', variables('vmNameMaster'))]"
       ],
       "copy": {
