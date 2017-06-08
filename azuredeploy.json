@@ -321,7 +321,7 @@
       "dependsOn": [
         "[variables('storageAccountName')]",
         "[variables('nicNameMaster')]",
-        "[concat(parameters('vmNameNFSServer'), '/azureVmUtils')]"
+        "[concat(parameters('vmNameNFSServer'), '/scripts')]"
       ],
       "properties": {
         "hardwareProfile": {
@@ -430,7 +430,7 @@
       "dependsOn": [
         "[variables('storageAccountName')]",
         "nicLoop",
-        "[concat(parameters('vmNameNFSServer'), '/azureVmUtils')]",
+        "[concat(parameters('vmNameNFSServer'), '/scripts')]",
         "[concat('Microsoft.Compute/virtualMachines/', variables('vmNameMaster'))]"
       ],
       "copy": {
@@ -700,7 +700,7 @@
       "resources": [
         {
           "type": "Microsoft.Compute/virtualMachines/extensions",
-          "name": "[concat(parameters('vmNameNFSServer'), '/azureVmUtils')]",
+          "name": "[concat(parameters('vmNameNFSServer'), '/scripts')]",
           "apiVersion": "2015-06-15",
           "location": "[resourceGroup().location]",
           "dependsOn": [
