@@ -127,7 +127,7 @@
     "imageOffer": "UbuntuServer",
     "nicNameMaster": "sshNIC",
     "nicNameWorker": "nic-execution-",
-    "extensionNameMasterWorker": "setup",
+    "extensionNameMasterWorker": "setupChainerMN",
     "extensionNameNFSServer": "setupNfs",
     "securityGroupName": "[concat('NFS-',uniquestring(resourceGroup().id))]",
     "networkSettings": {
