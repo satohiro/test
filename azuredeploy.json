@@ -286,6 +286,7 @@
         "osProfile": {
           "computerName": "[variables('vmNameMaster')]",
           "adminUsername": "[parameters('adminUserName')]",
+          "adminPassword": "[parameters('adminPassword')]",
           "linuxConfiguration": {
             "disablePasswordAuthentication": "true",
             "ssh": {
