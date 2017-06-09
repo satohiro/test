@@ -1,0 +1,5 @@
+{
+  "run_list": [
+    "recipe[nfs]", "recipe[nfs::server]", "recipe[nfssetup]"
+  ]
+}

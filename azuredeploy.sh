@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# This script can be found on https://github.com/***********
+# This script can be found on https://github.com/satohiro/test/blob/master/azuredeploy.sh
 # This script is part of azure deploy ARM template
 # This script assumes the Linux distribution to be Ubuntu (or at least have apt-get support)
 
@@ -180,8 +180,8 @@ then
   cd /tmp 
   mkdir nfssetup
   cd nfssetup/ 
-  git clone https://github.com/manabuishii/azure-files.git . #*****
-  cd leader_followers/chef 
+  git clone https://github.com/satohiro/test.git .
+  cd chef 
   HOME=/root berks vendor cookbooks >  /tmp/berks.txt.$$ 2>&1
   chef-client -j environments/nfsserver.${SUFFIX}json -z  > /tmp/chef-client.txt.$$ 2>&1
   # create newuser
