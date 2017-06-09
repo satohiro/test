@@ -77,21 +77,14 @@
       "type": "string",
       "defaultValue": "Standard_A2",
       "metadata": {
-        "description": "Size of the execution nodes."
+        "description": "Size of the master and worker nodes."
       }
     },
-    "nodeExecutionCount": {
+    "workerNodeCount": {
       "type": "int",
       "defaultValue": 1,
       "metadata": {
-        "description": "Number of execution nodes in the cluster."
-      }
-    },
-    "vmSizeLeader": {
-      "type": "string",
-      "defaultValue": "Standard_A2",
-      "metadata": {
-        "description": "Size of the login node."
+        "description": "Number of worker nodes in the cluster."
       }
     },
     "vmSizeNFSServer": {
@@ -125,7 +118,7 @@
   },
   "variables": {
     "vmNameMaster": "master",
-    "vmNameExecution": "exec-",
+    "vmNameWorker": "exec-",
     "storageAccountName": "[concat(uniquestring(resourceGroup().id), 'sasmaster')]",
     "location": "[resourceGroup().location]",
     "dnsName": "[concat('machine-', uniqueString(resourceGroup().id))]",
@@ -134,6 +127,8 @@
     "imageOffer": "UbuntuServer",
     "nicNameMaster": "sshNIC",
     "nicNameWorker": "nic-execution-",
+    "extensionNameMasterWorker": "setup",
+    "extensionNameNFSServer": "setupNfs",
     "securityGroupName": "[concat('NFS-',uniquestring(resourceGroup().id))]",
     "networkSettings": {
       "virtualNetworkName": "virtualnetwork",
@@ -155,8 +150,8 @@
       }
     },
     "tagValues": {
-        "User": "[parameters('UserTag')]",
-        "Environment": "Production"
+      "User": "[parameters('UserTag')]",
+      "Environment": "Production"
     },
     "singleQuote": "'",
     "publicIPAddressNameNFSServer": "sshPublicIPNFSServer",
@@ -165,7 +160,7 @@
     "publicIPAddressType": "Dynamic",
     "sshKeyPath": "[concat('/home/',parameters('adminUserName'),'/.ssh/authorized_keys')]",
     "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets/', variables('networkSettings').virtualNetworkName, variables('networkSettings').subnet.dse.name)]",
-    "installationParameter": "[concat(variables('vmNameMaster'),' ', variables('networkSettings').statics.master,' ', variables('vmNameExecution'),' ', variables('networkSettings').statics.workerRange.base,' ', variables('networkSettings').statics.workerRange.start,' ',parameters('vmNameNFSServer'),' ', variables('networkSettings').statics.nfsserver,' ',parameters('generalUserName'),' ',parameters('nodeExecutionCount'), ' ', variables('singleQuote'),parameters('generalUserSSHKeyData'), variables('singleQuote'))]",
+    "installationParameter": "[concat(variables('vmNameMaster'),' ', variables('networkSettings').statics.master,' ', variables('vmNameWorker'),' ', variables('networkSettings').statics.workerRange.base,' ', variables('networkSettings').statics.workerRange.start,' ',parameters('vmNameNFSServer'),' ', variables('networkSettings').statics.nfsserver,' ',parameters('generalUserName'),' ',parameters('workerNodeCount'), ' ', variables('singleQuote'),parameters('generalUserSSHKeyData'), variables('singleQuote'))]",
     "installationCLILeader": "[concat('sh azuredeploy.sh ', 'master',' ', variables('installationParameter'))]",
     "installationCLIFollower": "[concat('sh azuredeploy.sh ', 'exec',' ', variables('installationParameter'))]",
     "installationCLINFSServer": "[concat('sh azuredeploy.sh ', 'nfsserver',' ', variables('installationParameter'))]"
@@ -282,11 +277,11 @@
       "dependsOn": [
         "[variables('storageAccountName')]",
         "[variables('nicNameMaster')]",
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNameNFSServer'), '/extensions/scripts')]"
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNameNFSServer'), '/extensions/', variables('extensionNameNFSServer'))]"
       ],
       "properties": {
         "hardwareProfile": {
-          "vmSize": "[parameters('vmSizeLeader')]"
+          "vmSize": "[parameters('vmSize')]"
         },
         "osProfile": {
           "computerName": "[variables('vmNameMaster')]",
@@ -331,7 +326,7 @@
         {
           "apiVersion": "2016-03-30",
           "type": "extensions",
-          "name": "Installation",
+          "name": "[variables('extensionNameMasterWorker')]",
           "location": "[resourceGroup().location]",
           "dependsOn": [
             "[variables('vmNameMaster')]"
@@ -365,7 +360,7 @@
       ],
       "copy": {
         "name": "nicLoop",
-        "count": "[parameters('nodeExecutionCount')]"
+        "count": "[parameters('workerNodeCount')]"
       },
       "properties": {
         "ipConfigurations": [
@@ -385,25 +380,24 @@
     {
       "apiVersion": "2016-03-30",
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat(variables('vmNameExecution'), copyindex())]",
+      "name": "[concat(variables('vmNameWorker'), copyindex())]",
       "location": "[resourceGroup().location]",
       "tags": "[variables('tagValues')]",
       "dependsOn": [
         "[variables('storageAccountName')]",
         "nicLoop",
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNameNFSServer'), '/extensions/scripts')]",
-        "[concat('Microsoft.Compute/virtualMachines/', variables('vmNameMaster'))]"
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNameNFSServer'), '/extensions/', variables('extensionNameNFSServer'))]"
       ],
       "copy": {
         "name": "foo",
-        "count": "[parameters('nodeExecutionCount')]"
+        "count": "[parameters('workerNodeCount')]"
       },
       "properties": {
         "hardwareProfile": {
           "vmSize": "[parameters('vmSize')]"
         },
         "osProfile": {
-          "computerName": "[concat(variables('vmNameExecution'), copyindex())]",
+          "computerName": "[concat(variables('vmNameWorker'), copyindex())]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]"
         },
@@ -417,7 +411,7 @@
           "osDisk": {
             "name": "osdisk",
             "vhd": {
-              "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob, 'vhds/osdisk-', variables('vmNameExecution'), copyIndex(), '.vhd')]"
+              "uri": "[concat(reference(resourceId('Microsoft.Storage/storageAccounts/', variables('storageAccountName'))).primaryEndpoints.blob, 'vhds/osdisk-', variables('vmNameWorker'), copyIndex(), '.vhd')]"
             },
             "caching": "ReadWrite",
             "createOption": "FromImage"
@@ -435,10 +429,10 @@
         {
           "apiVersion": "2016-03-30",
           "type": "extensions",
-          "name": "Installation",
+          "name": "[variables('extensionNameMasterWorker')]",
           "location": "[resourceGroup().location]",
           "dependsOn": [
-            "[concat(variables('vmNameExecution'), copyindex())]"
+            "[concat(variables('vmNameWorker'), copyindex())]"
           ],
           "properties": {
             "publisher": "Microsoft.Azure.Extensions",
@@ -662,10 +656,10 @@
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('vmNameNFSServer'), '/scripts')]",
+      "name": "[concat(parameters('vmNameNFSServer'), '/', variables('extensionNameNFSServer'))]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-          "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNameNFSServer'))]"
+        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmNameNFSServer'))]"
       ],
       "properties": {
         "publisher": "Microsoft.Azure.Extensions",
